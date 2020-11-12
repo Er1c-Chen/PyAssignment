@@ -17,6 +17,13 @@ class cuisine:
     def modStore(self):
         self.store = input("请输入要修改的库存:")
 
+    def show(self):
+        print("****************************************\n"
+              "      菜品名称            价格      数量\n")
+        print("%-24s" % self.name)
+        print("%6.2f" % self.price)
+        print("%10d\n"% (self.store - self.sold))
+
 
 class cart:
     def __init__(self, name, price, amount):
@@ -27,12 +34,16 @@ class cart:
     def modAmount(self):
         self.amount = input("请输入所需的数量：")
 
-    def show(self, data):
+    def show(self):
         print("****************************************\n"
-              "序号  菜品名称            价格      数量\n")
-        for t, item in enumerate(data)
+              "      菜品名称            价格      数量\n")
+        print("%-24s" % self.name)
+        print("%6.2f" % self.price)
+        print("%10d\n"% self.amount)
 MAXSIZE = 20
 dish = []
+cart = []
+
 for num in range(MAXSIZE):
     dish[num] = cuisine()
 
