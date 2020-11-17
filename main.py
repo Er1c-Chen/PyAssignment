@@ -98,21 +98,19 @@ def buyMenu(dish, cart):
         for item in dish:
             item.show()
         orderMenu(dish, cart)
-    elif input() == '2':
-        if coreMenu() == '1':
+    else:
+        ch = coreMenu()
+        if ch == '1':
             buyMenu(dish, cart)
-        else:
+        elif ch == '2':
             os.system("cls")
             sellMenu(dish, cart)
 
 
 def orderMenu(dish, cart):
-    # i = 0
     while True:
         order = input("****************************************\n"
                       "请输入所选菜品的序号：")
-        # cart[i].name = dish[int(order) - 1].name
-        # cart[i].price = dish[int(order) - 1].price
         amo = int(input("请输入你想要的数量："))
         if (dish[int(order) - 1].store - dish[int(order) - 1].sold - amo) > 0:
             cart.append(cartItem(dish[int(order) - 1].name, dish[int(order) - 1].price, amo))
@@ -129,26 +127,6 @@ def orderMenu(dish, cart):
                     break
                 else:
                     ch = input("错误！请输入y/n！")
-        '''
-        if (dish[int(order) - 1].store - dish[int(order) - 1].sold - amo) < 0:
-            print("所选菜品库存不足！请重新选择！")
-            i -= 1 if i >= 0 else 0
-        else:
-            print("添加成功！")
-            cart[i].amount += amo
-            dish[int(order) - 1].sold += amo
-        ch = input("是否继续添加？y/n")
-        if ch == 'n' or ch == 'N':
-            break
-        else:
-            while True:
-                if ch == 'y' or ch == 'Y':
-                    i += 1
-                    break
-                else:
-                    ch = input("错误！请输入y/n！")
-        '''
-
     settleCart(dish, cart)
 
 
@@ -197,25 +175,26 @@ def sellMenu(dish, cart):
 
 def addCart(dish, cart):
     os.system("cls")
-    order = 0
     flag = 0
     print("****************************************\n"
           "序号   菜品名称            价格      数量")
     for item in dish:
         item.show()
     print("****************************************\n"
-          "请选择需要添加的菜品（仅一份）：", end='')
+          "请选择需要添加的菜品序号与数量：", end='')
     while True:
-        order = int(input()) - 1
+        inp = input().split()
+        order = int(inp[0]) - 1
+        orderAmo = int(inp[1])
         if (dish[order].store - dish[order].sold) >= 1:
             for item in cart:
                 if item.name == dish[order].name:
-                    item.amount += 1
+                    item.amount += orderAmo
                     flag = 1
             if not flag:
-                cart.append(cartItem(dish[order].name, dish[order].price, 1))
+                cart.append(cartItem(dish[order].name, dish[order].price, orderAmo))
             print("添加成功！")
-            dish[order].sold += 1
+            dish[order].sold += orderAmo
             settleCart(dish, cart)
             break
         else:
@@ -226,11 +205,13 @@ def addCart(dish, cart):
 
 
 def settleCart(dish, cart):
+    sum = 0
     print("****************************************\n"
           "菜品名称            价格      数量")
     for item in cart:
         item.show()
-    print("总金额：{:.2f}".format(sum(item.price * item.amount) for item in cart))
+        sum += item.price * item.amount
+    print("总金额：{:.2f}".format(sum))
     ch = input("****************************************\n"
                "            1.确认订单\n"
                "            2.添加菜品\n"
@@ -247,9 +228,7 @@ def settleCart(dish, cart):
 
 
 def confCart(cart):
-    for item in cart:
-        del item
-    cart = [cartItem(0, 0, 0)]
+    del cart[:]
     print("****************************************")
     print("订单提交成功！\n欢迎下次光临！")
     os.system("pause")
@@ -259,11 +238,13 @@ def confCart(cart):
 def delCart(dish, cart):
     print("****************************************\n"
           "提示：请输入目前菜品的编号\n"
-          "请选择删除的菜品（仅一份）：", end='')
-    order = int(input()) - 1
+          "请选择删除的菜品与数量：", end='')
     while True:
+        inp = input().split()
+        order = int(inp[0]) - 1
+        orderAmo = int(inp[1])
         if cart[order].amount > 1:
-            cart[order].amount -= 1
+            cart[order].amount -= orderAmo
             print("删除成功！")
             break
         elif cart[order].amount == 1:
@@ -281,11 +262,10 @@ def addDish(dish, cart):
     for item in dish:
         item.show()
     print("****************************************")
-    a = int(input("请输入：序号："))
-    b = input("菜品名称：")
+    b = input("请输入菜品名称：")
     c = float(input("价格："))
     d = int(input("库存量："))
-    dish.append(cuisine(a, b, c, d, 0))
+    dish.append(cuisine(dish[-1].order + 1, b, c, d, 0))
     print("添加成功！")
     print("****************************************\n"
           "序号   菜品名称            价格      数量")
