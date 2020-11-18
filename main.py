@@ -159,7 +159,7 @@ def sellMenu(dish, cart):
         loadDish()
         sellMenu(dish, cart)
     elif cho == '7':
-        chart(dish)
+        showChart(dish)
         sellMenu(dish, cart)
     elif cho == '8':
         if coreMenu() == '1':
@@ -239,18 +239,18 @@ def delCart(dish, cart):
         inp = input().split()
         order = int(inp[0]) - 1
         orderAmo = int(inp[1])
-        if cart[order].amount > 1:
+        if cart[order].amount - orderAmo >= 1:
             cart[order].amount -= orderAmo
             for item in dish:
                 if item.name == cart[order].name:
                     item.sold -= orderAmo
             print("删除成功！")
             break
-        elif cart[order].amount == 1:
+        elif cart[order].amount - orderAmo <= 0:
             cart.pop(order)
             for item in dish:
                 if item.name == cart[order].name:
-                    item.sold -= orderAmo
+                    item.sold -= cart[order].amount
             print("删除成功！")
             break
         else:
@@ -319,7 +319,7 @@ def delDish(dish, cart):
     sellMenu(dish, cart)
 
 
-def chart(dish):
+def showChart(dish):
     x = [i for i in range(len(dish))]
     y = []
     xticks = []
