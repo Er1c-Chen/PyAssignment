@@ -1,6 +1,7 @@
 import csv, os
 from matplotlib import pyplot as plt
 
+
 class cuisine:
     def __init__(self, order, name, price, store, sold):
         self.order = int(order)
@@ -240,10 +241,16 @@ def delCart(dish, cart):
         orderAmo = int(inp[1])
         if cart[order].amount > 1:
             cart[order].amount -= orderAmo
+            for item in dish:
+                if item.name == cart[order].name:
+                    item.sold -= orderAmo
             print("删除成功！")
             break
         elif cart[order].amount == 1:
             cart.pop(order)
+            for item in dish:
+                if item.name == cart[order].name:
+                    item.sold -= orderAmo
             print("删除成功！")
             break
         else:
