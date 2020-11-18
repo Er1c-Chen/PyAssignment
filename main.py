@@ -1,5 +1,5 @@
 import csv, os
-
+from matplotlib import pyplot as plt
 
 class cuisine:
     def __init__(self, order, name, price, store, sold):
@@ -8,15 +8,6 @@ class cuisine:
         self.price = float(price)
         self.store = int(store)
         self.sold = int(sold)
-
-    def modName(self):
-        self.name = input("请输入要修改的名字:")
-
-    def modPrice(self):
-        self.price = input("请输入要修改的价格:")
-
-    def modStore(self):
-        self.store = input("请输入要修改的库存:")
 
     def show(self):
         print("%-6s" % self.order, end='')
@@ -56,7 +47,7 @@ def checkPass(oriPasswd):
 
 
 def loadDish():
-    with open('menu.csv', 'r') as f:
+    with open('menu.csv', 'r', encoding='UTF-8') as f:
         reader = csv.reader(f)
         data = list(reader)
         for i, item in enumerate(data):
@@ -140,7 +131,8 @@ def sellMenu(dish, cart):
                 "        4.修改菜品\n"
                 "        5.删除菜品\n"
                 "      6.重新加载菜单\n"
-                "      7.返回上级菜单\n"
+                "     7.制作销量一览表\n"
+                "      8.返回上级菜单\n"
                 "****************************************\n"
                 "请选择：")
     os.system("cls")
@@ -166,6 +158,9 @@ def sellMenu(dish, cart):
         loadDish()
         sellMenu(dish, cart)
     elif cho == '7':
+        chart(dish)
+        sellMenu(dish, cart)
+    elif cho == '8':
         if coreMenu() == '1':
             buyMenu(dish, cart)
         else:
@@ -287,11 +282,11 @@ def modDish(dish, cart):
     cho = input("1.菜品名称 2.价格 3.库存"
                 "\n 请输入要修改的参数：")
     if cho == '1':
-        dish[order - 1].name = input("\n请输入新的菜品名称：")
+        dish[order - 1].modName()
     if cho == '2':
-        dish[order - 1].price = input("\n请输入新的菜品价格：")
+        dish[order - 1].modPrice()
     if cho == '3':
-        dish[order - 1].store = input("\n请输入新的菜品库存：")
+        dish[order - 1].modStore()
     print("修改成功！")
     print("****************************************\n"
           "序号   菜品名称            价格      数量")
@@ -317,10 +312,25 @@ def delDish(dish, cart):
     sellMenu(dish, cart)
 
 
+def chart(dish):
+    x = [i for i in range(len(dish))]
+    y = []
+    xticks = []
+    for item in dish:
+        y.append(item.sold)
+        xticks.append(item.name)
+    plt.xticks(x, xticks, fontproperties="SimSun", fontsize=8, wrap=True)
+    plt.bar(x, y, align='center')
+    plt.title('销量一览表', fontproperties="SimSun", fontsize=15)
+    plt.ylabel('销量', fontproperties="SimSun", fontsize=15)
+    plt.xlabel('菜品', fontproperties="SimSun", fontsize=15)
+    plt.show()
+
+
 MAXSIZE = 20
+oriPasswd = 666666
 dish = []
 cart = []
-oriPasswd = 666666
 loadDish()
 ch = coreMenu()
 if ch == '1':
