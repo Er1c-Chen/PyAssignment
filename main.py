@@ -16,6 +16,15 @@ class cuisine:
         print("%8.2f" % self.price, end='')
         print("%8d\n" % (self.store - self.sold), end='')
 
+    def modName(self):
+        self.name = input()
+
+    def modPrice(self):
+        self.price = float(input())
+
+    def modStore(self):
+        self.store = int(input())
+
 
 class cartItem:
     def __init__(self, name, price, amount):
@@ -58,7 +67,8 @@ def loadDish():
 def saveDish(dish):
     with open('menu.csv', 'w') as f:
         writer = csv.writer(f)
-        writer.writerows(dish)
+        for item in dish:
+            writer.writerows(item)
         print("保存成功！", end='')
 
 
@@ -324,24 +334,23 @@ def showChart(dish):
     y = []
     xticks = []
     for item in dish:
-        y.append(item.sold)
+        y.append(item.sold*item.price)
         xticks.append(item.name)
-    plt.xticks(x, xticks, fontproperties="SimSun", fontsize=8, wrap=True)
+    plt.xticks(x, xticks, fontproperties="SimHei", fontsize=9, wrap=True)
     plt.bar(x, y, align='center')
-    plt.title('销量一览表', fontproperties="SimSun", fontsize=15)
-    plt.ylabel('销量', fontproperties="SimSun", fontsize=15)
-    plt.xlabel('菜品', fontproperties="SimSun", fontsize=15)
+    plt.title('销量一览表', fontproperties="SimHei", fontsize=15)
+    plt.ylabel('销售额/￥', fontproperties="SimHei", fontsize=15)
+    plt.xlabel('菜品', fontproperties="SimHei", fontsize=15)
     plt.show()
 
 
-MAXSIZE = 20
 oriPasswd = 666666
-dish = []
-cart = []
+dish, cart = [], []
 loadDish()
 ch = coreMenu()
 if ch == '1':
     buyMenu(dish, cart)
-if ch == '2':
+elif ch == '2':
     checkPass(oriPasswd)
     sellMenu(dish, cart)
+
