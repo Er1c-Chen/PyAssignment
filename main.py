@@ -1,5 +1,21 @@
 import csv, os
 from matplotlib import pyplot as plt
+import tkinter as tk
+from tkinter import ttk
+import tkinter.messagebox
+import pandas as pd
+
+
+class Field:
+    def __init__(self, key, chn):
+        self.key = key
+        self.chn = chn
+        self.label = None
+        self.entry = None
+        self.str_var = None
+
+
+
 
 
 class cuisine:
