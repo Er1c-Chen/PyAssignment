@@ -83,6 +83,7 @@ class BaseWindow(tk.Tk):
     def update(self):
         pass
 
+
 class LessonWindow(BaseWindow):
     def __init__(self):
         queryConfig=[["leson_no","课程编号"],["leson_name","课程名称"]]
