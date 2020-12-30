@@ -30,6 +30,32 @@ class BasicSettings(tk.Tk):
         self.btnUpdate.grid(row=0, column=1, padx=15, pady=30)
         self.btnDelete.grid(row=0, column=2, padx=15, pady=30)
 
+        columns = ("name", "price", "store")
+        self.tree = ttk.Treeview(self.frame_center, show="headings", height=8, columns=columns)
+        self.vbar = ttk.Scrollbar(self.frame_center, orient=tk.VERTICAL, command=self.tree.yview)
+        self.tree.column("name", anchor="center")
+        self.tree.column("price", anchor="center")
+        self.tree.column("store", anchor="center")
+        self.tree.heading("name", text="菜品名称")
+        self.tree.heading("price", text="价格")
+        self.tree.heading("store", text="库存")
+        self.tree.grid(row=0, column=0, sticky=tk.NSEW, ipadx=10)
+        self.vbar.grid(row=0, column=1, sticky=tk.NS)
+
+        self.frame_top.grid(row=0, column=0, padx=60)
+        self.frame_center.grid(row=1, column=0, padx=60, ipady=1)
+        self.frame_bottom.grid(row=2, column=0, padx=60)
+        self.frame_top.grid_propagate(0)
+        self.frame_center.grid_propagate(0)
+        self.frame_bottom.grid_propagate(0)
+
+        i = 0
+        for v in dataConfig:
+            tree.insert('', i, values=(v.get("name"), v.get("gender"), v.get("age")))
+            i += 1
+
+        
+        
         head_indices = [chr(i + ord('a')) for i in range(len(self.dataConfig))]
         self.tree = ttk.Treeview(self.frame_center, show="headings", height=8, columns=head_indices)
         self.vbar = ttk.Scrollbar(self.frame_center, orient=tk.VERTICAL, command=self.tree.yview)
@@ -52,6 +78,7 @@ class BasicSettings(tk.Tk):
         self.frame_bottom.grid_propagate(0)
 
         self.item_selection = ""
+
         self.mainloop()
 
     def item_click(self, event):
@@ -71,10 +98,13 @@ class BasicSettings(tk.Tk):
 
 class MenuWindow(BasicSettings):
     def __init__(self):
-        dataConfig = [
-            ["leson_no", "课程编号", 80, "center"],
-            ["leson_name", "课程名称", 120, "center"],
-            ["leson_room", "上课地点", 120, "center"],
-            ["leson_time", "上课时间", 120, "center"]
-        ]
-        super().__init__(dataConfig)
+        dish = []
+        with open('menu.csv', 'r', encoding='UTF-8') as f:
+            reader = csv.reader(f)
+            data = list(reader)
+            for i, item in enumerate(data):
+                dish.append(cuisine(data[i][0], data[i][1], data[i][2], data[i][3], data[i][4]))
+            print(dish)
+        super().__init__(dish)
+
+MenuWindow()
