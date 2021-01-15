@@ -21,28 +21,22 @@ class LoginWindow(tk.Tk):
         self.mainloop()
 
     def buy(self):
-        global dish, cart
-        BuyWindow(dish)
+        BuyWindow()
 
     def sell(self):
         PassCheckWinw()
 
 
 class BuyWindow(tk.Toplevel):
-    def __init__(self, dataConfig):
+    def __init__(self):
         super().__init__()
-        self.dataConfig = dataConfig
+        global dish
+        self.dataConfig = dish
         self.frame_top = tk.Frame(self, width=400, height=90)
         self.frame_middle = tk.Frame(self, width=400, height=180)
         self.frame_bottom = tk.Frame(self, width=400, height=90)
         self.label = tk.Label(self.frame_top, text="000", width=0, height=0).grid(row=0, column=0)
-        self.btnAdd = tk.Button(self.frame_bottom, text="添加", command=self.add)
-        self.btnUpdate = tk.Button(self.frame_bottom, text="修改", command=self.update)
-        self.btnDelete = tk.Button(self.frame_bottom, text="删除", command=self.delete)
-        self.btnAdd.grid(row=0, column=0, padx=40, pady=30)
-        self.btnUpdate.grid(row=0, column=1, padx=40, pady=30)
-        self.btnDelete.grid(row=0, column=2, padx=40, pady=30)
-
+        self.btn = tk.Button(self.frame_bottom, text='完成选购', command=self.finish).grid(padx=160)
         self.columns = ("order", "name", "price", "store")
         self.tree = ttk.Treeview(self.frame_middle, show="headings", height=8, columns=self.columns)
         self.rollbar = ttk.Scrollbar(self.frame_middle, orient=tk.VERTICAL, command=self.tree.yview)
@@ -65,16 +59,21 @@ class BuyWindow(tk.Toplevel):
         self.frame_middle.grid_propagate(0)
         self.frame_bottom.grid_propagate(0)
 
-        self.loadin(dataConfig)
+        self.loadin(dish)
         self.tree["selectmode"] = "browse"
         self.tree.bind("<ButtonRelease-1>", self.item_click)
         self.mainloop()
 
     def item_click(self, event):
-        pass
+        global cart
+        win = amountConf()
+        amount = win.getAmount()
+        for item in self.tree.selection():
+            item_text = self.tree.item(item, "values")
+            cart.append(cartItem(item_text[1], item_text[2], amount))
 
-    def query(self):
-        pass
+    def finish(self):
+        ShopCart()
 
     def add(self):
         pass
@@ -95,7 +94,16 @@ class BuyWindow(tk.Toplevel):
 class SellWindow(tk.Toplevel):
     def __init__(self):
         super().__init__()
+        self.frame_top = tk.Frame(self, width=400, height=90)
+        self.frame_middle = tk.Frame(self, width=400, height=180)
+        self.frame_bottom = tk.Frame(self, width=400, height=90)
 
+        self.btnAdd = tk.Button(self.frame_bottom, text="添加", command=self.add)
+        self.btnUpdate = tk.Button(self.frame_bottom, text="修改", command=self.update)
+        self.btnDelete = tk.Button(self.frame_bottom, text="删除", command=self.delete)
+        self.btnAdd.grid(row=0, column=0, padx=40, pady=30)
+        self.btnUpdate.grid(row=0, column=1, padx=40, pady=30)
+        self.btnDelete.grid(row=0, column=2, padx=40, pady=30)
         self.lb_1 = tk.Label(self, text='LOLs').grid()
         self.mainloop()
 
@@ -124,9 +132,54 @@ class ShopCart(tk.Toplevel):
     def __init__(self):
         super().__init__()
         self.title("购物车")
-        self.upFrame = tk.Frame(self, width=400, height=90)
-        self.midFrame = tk.Frame(self, width=400, height=180)
-        self.downFrame = tk.Frame(self, width=400, height=90)
+        self.frame_top = tk.Frame(self, width=400, height=90)
+        self.frame_middle = tk.Frame(self, width=400, height=180)
+        self.frame_bottom = tk.Frame(self, width=400, height=90)
+
+        self.columns = ("order", "name", "price", "amount")
+        self.tree = ttk.Treeview(self.frame_middle, show="headings", height=8, columns=self.columns)
+        self.rollbar = ttk.Scrollbar(self.frame_middle, orient=tk.VERTICAL, command=self.tree.yview)
+        self.tree.column("order", width=40, anchor="center")
+        self.tree.column("name", width=180, anchor="center")
+        self.tree.column("price", width=80, anchor="center")
+        self.tree.column("amount", width=80, anchor="center")
+        self.tree.heading("order", text="序号")
+        self.tree.heading("name", text="菜品名称")
+        self.tree.heading("price", text="价格")
+        self.tree.heading("amount", text="份数")
+        self.tree.grid(row=0, column=0, sticky=tk.NSEW, ipadx=10)
+        self.rollbar.grid(row=0, column=1, sticky=tk.NS)
+        self.tree.configure(yscrollcommand=self.rollbar.set)
+
+        self.frame_top.grid(row=0, column=0, padx=60)
+        self.frame_middle.grid(row=1, column=0, padx=60, ipady=1)
+        self.frame_bottom.grid(row=2, column=0, padx=60)
+        self.frame_top.grid_propagate(0)
+        self.frame_middle.grid_propagate(0)
+        self.frame_bottom.grid_propagate(0)
+        self.loadin()
+        self.mainloop()
+
+    def loadin(self):
+        global cart
+        i = 0
+        for item in cart:
+            self.tree.insert('', i, values=(i+1, item.name, item.price, item.amount))
+            i += 1
+
+
+class amountConf(tk.Toplevel):
+    def __init__(self):
+        super().__init__()
+        self.lbl = tk.Label(self, text='请选择订购的数量')
+        self.lbl.grid(row=0)
+        self.com = ttk.Combobox(self, value=('1', '2', '3', '4', '5', '6', '7', '8', '9', '10'))
+        self.com.grid(row=1)
+
+    def getAmount(self):
+        amount = self.com.get()
+        amount = int(amount)
+        return amount
 
 class cuisine:
     def __init__(self, order, name, price, store, sold):
