@@ -178,7 +178,6 @@ class amountConf(tk.Toplevel):
 
     def getAmount(self):
         amount = self.com.get()
-        amount = int(amount)
         return amount
 
 class cuisine:
